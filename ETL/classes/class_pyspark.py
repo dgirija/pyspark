@@ -6,8 +6,8 @@ from pyspark import SparkContext
 
 
 class Sparkclass:
-    def __init__(self,conf):
-        self.conf = conf
+    def __init__(self,config):
+        self.config = config
 
     def sparkStart(self, kwargs:dict):
         MASTER = kwargs['spark_conf']['master']
@@ -15,7 +15,9 @@ class Sparkclass:
         LOG_LEVEL = kwargs['log']['level']
 
         def createSession(master:Optional[str]="local[*]",app_name:Optional[str]="myapp") -> SparkSession:
-            ''' Create a spark session '''
+
+            #!  Create a spark session
+
             spark = SparkSession.builder.appName(app_name).master(master).getOrCreate()
             return spark
         

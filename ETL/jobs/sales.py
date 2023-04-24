@@ -15,14 +15,19 @@ LOG_FORMAT = f"%(asctime)s - LINE:%(lineno)d - %(name)s - %(levelname)s - %(func
 logging.basicConfig(filename=LOG_FILE, level=logging.DEBUG, format=LOG_FORMAT)
 logger = logging.getLogger('py4j')
 
+
 sys.path.insert(1,project_dir)
 from classes import class_pyspark
+
 
 def main(project_dir:str) -> None:
     '''Start A spark job'''
     # class_pyspark.Sparkclass(config = {}).sparkStart()
-    config = openFile(f"{project_dir}/json/sales.json")
-    spark = sparkStart(config)
+    conf = openFile(f"{project_dir}/json/sales.json")
+    spark = sparkStart(conf)
+
+    transactionDf = importData(spark,f"{project_dir}/test-data/sales/transactions",".json$")
+
     sparkStop(spark)
 
 
@@ -34,12 +39,19 @@ def openFile(filepath: str) -> dict:
             return data
     return (openJson(filepath))
 
-def sparkStart(config:dict) -> SparkSession:
-    if isinstance(config, dict):
-        class_pyspark.Sparkclass(conf={}).sparkStart(config)
+
+def sparkStart(conf:dict) -> SparkSession:
+    if isinstance(conf, dict):
+        return class_pyspark.Sparkclass(config={}).sparkStart(conf)
+
 
 def sparkStop(spark:SparkSession) -> None:
     spark.stop() if isinstance(spark,SparkSession) else None
+
+
+def importData(spark:SparkSession, datapath:str,pattern:Optional[str]=None) -> DataFrame:
+    if isinstance(spark,SparkSession):
+        return class_pyspark.Sparkclass(config={}).importData(spark,datapath,pattern)
 
 if __name__ == '__main__':
     main(project_dir)
